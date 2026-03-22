@@ -52,6 +52,7 @@ const defaultState = {
   wins: [],
   journal: [],
   posts: [],
+  activeCommunityGroup: "",
   dark: true,
   notifTime: "20:00",
 };
@@ -589,13 +590,23 @@ function renderProgress() {
 }
 
 async function renderCommunity() {
-  const selected = state.fears.length ? state.fears : ["Échec", "Rejet"];
+  const selected = getCommunityGroups();
+  if (!state.activeCommunityGroup || !selected.includes(state.activeCommunityGroup)) {
+    state.activeCommunityGroup = selected[0];
+    saveState();
+  }
+
   groupsList.innerHTML = "";
 
   selected.forEach((fear) => {
     const div = document.createElement("div");
-    div.className = "feed-item";
+    div.className = `feed-item group-item ${state.activeCommunityGroup === fear ? "is-active" : ""}`;
     div.innerHTML = `<strong>Groupe de soutien — ${fear}</strong><br><span class="muted">Ici vous pouvez parler librement et vous détendre.</span>`;
+    div.addEventListener("click", async () => {
+      state.activeCommunityGroup = fear;
+      saveState();
+      await renderCommunity();
+    });
     groupsList.appendChild(div);
   });
 
@@ -611,13 +622,30 @@ async function renderCommunity() {
 
   postFeed.innerHTML = "";
   const source = state.posts.length ? state.posts : [
-    { text: "Bienvenue dans la communauté Serein 💙", user: "Serein", createdAt: new Date().toISOString() },
+    {
+      text: "Bienvenue dans la communauté Serein 💙",
+      user: "Serein",
+      createdAt: new Date().toISOString(),
+      fears: [state.activeCommunityGroup],
+    },
   ];
 
-  source.slice(0, 30).forEach((p) => {
+  const filtered = source.filter((p) => {
+    const tags = Array.isArray(p.fears) ? p.fears : (p.group ? [p.group] : []);
+    if (!tags.length) return true;
+    return tags.includes(state.activeCommunityGroup);
+  });
+
+  if (!filtered.length) {
+    postFeed.innerHTML = `<div class="feed-item">Aucun message pour le groupe ${escapeHTML(state.activeCommunityGroup)} pour le moment.</div>`;
+    return;
+  }
+
+  filtered.slice(0, 30).forEach((p) => {
     const item = document.createElement("div");
     item.className = "feed-item";
-    item.innerHTML = `<strong>${escapeHTML(p.user || "Membre")}</strong><br>${escapeHTML(p.text)}<br><small class="muted">${new Date(p.createdAt || p.date).toLocaleString("fr-FR")}</small>`;
+    const groupLabel = Array.isArray(p.fears) && p.fears.length ? p.fears[0] : (p.group || state.activeCommunityGroup);
+    item.innerHTML = `<strong>${escapeHTML(p.user || "Membre")}</strong><br>${escapeHTML(p.text)}<br><small class="muted">Groupe: ${escapeHTML(groupLabel)} · ${new Date(p.createdAt || p.date).toLocaleString("fr-FR")}</small>`;
     postFeed.appendChild(item);
   });
 }
@@ -627,11 +655,18 @@ async function addCommunityPost() {
   const text = input.value.trim();
   if (!text) return;
 
+  const selected = getCommunityGroups();
+  if (!state.activeCommunityGroup || !selected.includes(state.activeCommunityGroup)) {
+    state.activeCommunityGroup = selected[0];
+  }
+
   if (!backendAvailable) {
     state.posts.unshift({
       text,
       user: "Anonyme",
       createdAt: new Date().toISOString(),
+      group: state.activeCommunityGroup,
+      fears: [state.activeCommunityGroup],
     });
     input.value = "";
     saveState();
@@ -648,13 +683,19 @@ async function addCommunityPost() {
   try {
     await api("/api/posts", {
       method: "POST",
-      body: JSON.stringify({ text, fears: state.fears }),
+      body: JSON.stringify({ text, fears: [state.activeCommunityGroup] }),
     });
     input.value = "";
     await renderCommunity();
   } catch (err) {
     authFeedback.textContent = err.message;
   }
+}
+
+function getCommunityGroups() {
+  const groups = state.fears.length ? [...state.fears] : ["Échec", "Rejet"];
+  if (!groups.includes("Solitude")) groups.push("Solitude");
+  return [...new Set(groups)];
 }
 
 async function addJournalEntry(e) {

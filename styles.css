@@ -258,6 +258,15 @@ textarea { resize: vertical; }
   background: #ffffff08;
 }
 
+.group-item {
+  cursor: pointer;
+}
+
+.group-item.is-active {
+  border-color: #9fb2ffb8;
+  background: linear-gradient(135deg, #7c9bff30, #9d7cff20);
+}
+
 blockquote {
   margin: 0 0 12px;
   padding: 12px;
