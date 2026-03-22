@@ -178,8 +178,8 @@ async function initAuth() {
 
 function renderAuthStatus() {
   if (!backendAvailable) {
-    authStatus.textContent = "Mode gratuit local";
-    qs("#authBtn").textContent = "Cloud indisponible";
+    authStatus.textContent = "";
+    qs("#authBtn").textContent = "Connexion";
     qs("#authBtn").disabled = true;
     qs("#syncBtn").classList.add("hidden");
     return;
