@@ -60,6 +60,7 @@ let state = loadState();
 let currentUser = null;
 let deferredInstallPrompt = null;
 let breathTimer = null;
+let backendAvailable = true;
 
 const qs = (s) => document.querySelector(s);
 const qsa = (s) => Array.from(document.querySelectorAll(s));
@@ -88,9 +89,19 @@ async function init() {
   initNav();
   bindEvents();
   hydrateUI();
+  backendAvailable = await checkBackend();
   await initAuth();
   initPwa();
   renderAll();
+}
+
+async function checkBackend() {
+  try {
+    const res = await fetch("/health", { cache: "no-store" });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 function loadState() {
@@ -142,6 +153,12 @@ function initPwa() {
 }
 
 async function initAuth() {
+  if (!backendAvailable) {
+    currentUser = null;
+    renderAuthStatus();
+    return;
+  }
+
   const tk = token();
   if (!tk) {
     renderAuthStatus();
@@ -160,6 +177,15 @@ async function initAuth() {
 }
 
 function renderAuthStatus() {
+  if (!backendAvailable) {
+    authStatus.textContent = "Mode gratuit local";
+    qs("#authBtn").textContent = "Cloud indisponible";
+    qs("#authBtn").disabled = true;
+    qs("#syncBtn").classList.add("hidden");
+    return;
+  }
+
+  qs("#authBtn").disabled = false;
   if (currentUser) {
     authStatus.textContent = `Connecté: ${currentUser.name}`;
     qs("#authBtn").textContent = "Déconnexion";
@@ -601,6 +627,18 @@ async function addCommunityPost() {
   const input = qs("#communityPost");
   const text = input.value.trim();
   if (!text) return;
+
+  if (!backendAvailable) {
+    state.posts.unshift({
+      text,
+      user: "Anonyme",
+      createdAt: new Date().toISOString(),
+    });
+    input.value = "";
+    saveState();
+    await renderCommunity();
+    return;
+  }
 
   if (!currentUser) {
     authFeedback.textContent = "Connecte-toi pour publier dans la vraie communauté.";
