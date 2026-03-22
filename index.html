@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Serein — Transformer l’anxiété en force</title>
+  <meta name="theme-color" content="#7c9bff" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=3" />
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <header class="topbar glass">
+    <div class="brand">
+      <span class="logo">🕊️</span>
+      <div>
+        <h1>Serein</h1>
+        <p>Compagnon émotionnel intelligent</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span id="authStatus" class="auth-status">Mode local</span>
+      <button id="authBtn" class="btn">Connexion</button>
+      <button id="syncBtn" class="btn ghost">Synchroniser</button>
+      <button id="installPwaBtn" class="btn ghost hidden">Installer</button>
+      <button id="emergencyBtn" class="btn danger">Mode urgence</button>
+      <button id="themeBtn" class="btn ghost">Thème</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar glass">
+      <nav>
+        <button class="nav-link active" data-target="diagnostic">Diagnostic</button>
+        <button class="nav-link" data-target="therapy">Thérapie progressive</button>
+        <button class="nav-link" data-target="reassurance">Rassurance</button>
+        <button class="nav-link" data-target="community">Communauté</button>
+        <button class="nav-link" data-target="journal">Journal</button>
+      </nav>
+      <div class="pace-card">
+        <h3>Rythme personnalisé</h3>
+        <p id="paceText">Analyse en cours…</p>
+        <div class="progress"><span id="paceBar"></span></div>
+      </div>
+    </aside>
+
+    <section class="content">
+      <article id="diagnostic" class="panel glass active">
+        <h2>Diagnostic des peurs</h2>
+        <p class="muted">Questionnaire intelligent + cartographie émotionnelle.</p>
+
+        <form id="diagnosticForm" class="stack">
+          <div class="field">
+            <label>Peurs principales (plusieurs choix)</label>
+            <div class="chips" id="fearChips"></div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="stressRange">Niveau de stress du jour: <strong id="stressValue">5</strong>/10</label>
+              <input id="stressRange" type="range" min="0" max="10" value="5" />
+            </div>
+            <div class="field">
+              <label for="triggerInput">Déclencheur principal aujourd’hui</label>
+              <input id="triggerInput" type="text" placeholder="Ex: réunion, solitude, jugement…" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn primary">Analyser mon profil</button>
+        </form>
+
+        <div id="mapResult" class="result hidden"></div>
+      </article>
+
+      <article id="therapy" class="panel glass">
+        <h2>Thérapie progressive</h2>
+        <p class="muted">Expositions graduées, respiration guidée, reprogrammation cognitive.</p>
+
+        <div class="therapy-grid">
+          <section class="card">
+            <h3>Plan d’exposition graduée</h3>
+            <div id="exposurePlan" class="stack-sm"></div>
+            <button id="completeStepBtn" class="btn primary">Valider l’étape du jour</button>
+          </section>
+
+          <section class="card">
+            <h3>Respiration guidée (4-4-6)</h3>
+            <div class="breathing">
+              <div id="breathCircle" class="circle">Prêt</div>
+              <p id="breathInstruction" class="muted">Cliquez pour démarrer.</p>
+            </div>
+            <button id="startBreathBtn" class="btn">Démarrer 1 minute</button>
+          </section>
+
+          <section class="card">
+            <h3>Reprogrammation cognitive</h3>
+            <label for="negativeThought">Pensée négative</label>
+            <textarea id="negativeThought" rows="3" placeholder="Ex: Je vais forcément échouer."></textarea>
+            <button id="reframeBtn" class="btn">Transformer ma pensée</button>
+            <div id="reframeOutput" class="result hidden"></div>
+          </section>
+        </div>
+      </article>
+
+      <article id="reassurance" class="panel glass">
+        <h2>Rassurance continue</h2>
+        <p class="muted">Messages personnalisés, rappel des progrès, outils anti-panique.</p>
+
+        <div class="grid-2">
+          <section class="card">
+            <h3>Message du moment</h3>
+            <blockquote id="messageBox">Tu n’as pas besoin d’être parfait·e pour avancer.</blockquote>
+            <button id="newMessageBtn" class="btn">Nouveau message</button>
+          </section>
+
+          <section class="card">
+            <h3>Tes progrès</h3>
+            <ul id="progressList" class="list"></ul>
+          </section>
+
+          <section class="card">
+            <h3>Rappels intelligents</h3>
+            <div class="stack">
+              <label for="notifTime">Heure du rappel quotidien</label>
+              <input id="notifTime" type="time" value="20:00" />
+              <button id="saveNotifBtn" class="btn">Enregistrer le rappel</button>
+              <p class="muted">Si le navigateur autorise, Serein affichera un rappel bienveillant.</p>
+            </div>
+          </section>
+        </div>
+      </article>
+
+      <article id="community" class="panel glass">
+        <h2>Communauté bienveillante</h2>
+        <p class="muted">Groupes anonymes par type de peur, partage d’expériences, parrainage.</p>
+
+        <div class="grid-2">
+          <section class="card">
+            <h3>Groupes recommandés</h3>
+            <div id="groupsList" class="stack-sm"></div>
+          </section>
+
+          <section class="card">
+            <h3>Partage anonyme</h3>
+            <textarea id="communityPost" rows="3" placeholder="Écris un message bienveillant ou un progrès du jour…"></textarea>
+            <button id="postBtn" class="btn">Publier</button>
+            <div id="postFeed" class="feed"></div>
+          </section>
+        </div>
+      </article>
+
+      <article id="journal" class="panel glass">
+        <h2>Journal thérapeutique</h2>
+        <p class="muted">Suivi quotidien, schémas anxieux, célébration des victoires.</p>
+
+        <form id="journalForm" class="stack">
+          <div class="grid-3">
+            <div class="field">
+              <label for="mood">Émotion dominante</label>
+              <select id="mood">
+                <option>Calme</option>
+                <option>Anxieux·se</option>
+                <option>Triste</option>
+                <option>En colère</option>
+                <option>Confiant·e</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="intensity">Intensité (1-10)</label>
+              <input id="intensity" type="number" min="1" max="10" value="5" />
+            </div>
+            <div class="field">
+              <label for="trigger">Déclencheur</label>
+              <input id="trigger" type="text" placeholder="Ex: conflit, attente…" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="win">Victoire du jour</label>
+            <input id="win" type="text" placeholder="Ex: j’ai parlé malgré la peur." />
+          </div>
+          <button class="btn primary" type="submit">Enregistrer</button>
+        </form>
+
+        <section class="card">
+          <h3>Analyse intelligente</h3>
+          <p id="journalInsights" class="muted">Ajoute des entrées pour générer une analyse.</p>
+        </section>
+
+        <section class="card">
+          <h3>Historique récent</h3>
+          <div id="journalEntries" class="feed"></div>
+        </section>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="emergencyDialog" class="glass">
+    <h2>Mode urgence anti-panique</h2>
+    <p>Tu es en sécurité. Fais juste ces 3 étapes dans l’ordre:</p>
+    <ol>
+      <li><strong>Respire</strong> : 4 secondes inspire, 4 bloque, 6 expire (x6).</li>
+      <li><strong>Ancrage 5-4-3-2-1</strong> : 5 choses que tu vois, 4 que tu touches, 3 que tu entends, 2 que tu sens, 1 que tu goûtes.</li>
+      <li><strong>Phrase de sécurité</strong> : “Cette vague va passer. Je peux la traverser.”</li>
+    </ol>
+    <div class="dialog-actions">
+      <button id="emergencyBreathBtn" class="btn primary">Lancer respiration</button>
+      <button id="closeEmergencyBtn" class="btn">Fermer</button>
+    </div>
+  </dialog>
+
+  <dialog id="authDialog" class="glass">
+    <h2>Compte Serein</h2>
+    <p class="muted">Connexion sécurisée pour synchroniser journal, progrès et communauté.</p>
+    <form id="authForm" class="stack">
+      <div class="grid-2">
+        <div class="field">
+          <label for="authName">Nom (inscription)</label>
+          <input id="authName" type="text" placeholder="Ex: Lina" />
+        </div>
+        <div class="field">
+          <label for="authEmail">Email</label>
+          <input id="authEmail" type="email" placeholder="toi@email.com" required />
+        </div>
+      </div>
+      <div class="field">
+        <label for="authPassword">Mot de passe (min 6 caractères)</label>
+        <input id="authPassword" type="password" minlength="6" required />
+      </div>
+      <div class="dialog-actions">
+        <button type="button" id="registerBtn" class="btn">Créer un compte</button>
+        <button type="submit" class="btn primary">Se connecter</button>
+        <button type="button" id="closeAuthBtn" class="btn ghost">Fermer</button>
+      </div>
+      <p id="authFeedback" class="muted"></p>
+    </form>
+  </dialog>
+
+  <script src="app.full.js?v=3"></script>
+</body>
+</html>

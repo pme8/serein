@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: serein-app
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: SEREIN_JWT_SECRET
+        generateValue: true
+      - key: SEREIN_ENC_SECRET
+        generateValue: true

@@ -1,0 +1,16 @@
+{
+  "name": "serein-app",
+  "version": "1.0.0",
+  "description": "Serein - compagnon émotionnel intelligent (PWA + backend)",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "localtunnel": "^2.0.2"
+  }
+}

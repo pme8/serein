@@ -1,0 +1,13 @@
+{
+  "users": [],
+  "posts": [
+    {
+      "id": "seed-1",
+      "user": "Membre anonyme",
+      "text": "J’ai osé prendre la parole aujourd’hui. Petite victoire 💙",
+      "fears": ["Jugement"],
+      "createdAt": "2026-03-22T09:00:00.000Z"
+    }
+  ],
+  "notifications": []
+}
