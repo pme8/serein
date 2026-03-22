@@ -178,20 +178,19 @@ async function initAuth() {
 
 function renderAuthStatus() {
   if (!backendAvailable) {
-    authStatus.textContent = "";
-    qs("#authBtn").textContent = "Connexion";
-    qs("#authBtn").disabled = true;
+    if (authStatus) authStatus.textContent = "";
+    qs("#authBtn").classList.add("hidden");
     qs("#syncBtn").classList.add("hidden");
     return;
   }
 
-  qs("#authBtn").disabled = false;
+  qs("#authBtn").classList.remove("hidden");
   if (currentUser) {
-    authStatus.textContent = `Connecté: ${currentUser.name}`;
+    if (authStatus) authStatus.textContent = `Connecté: ${currentUser.name}`;
     qs("#authBtn").textContent = "Déconnexion";
     qs("#syncBtn").classList.remove("hidden");
   } else {
-    authStatus.textContent = "Mode local";
+    if (authStatus) authStatus.textContent = "Mode local";
     qs("#authBtn").textContent = "Connexion";
     qs("#syncBtn").classList.add("hidden");
   }

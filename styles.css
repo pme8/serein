@@ -314,6 +314,10 @@ body.light {
   font-size: 0.82rem;
 }
 
+.auth-status:empty {
+  display: none;
+}
+
 body.light label {
   color: #14203d !important;
 }
