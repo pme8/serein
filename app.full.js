@@ -595,7 +595,7 @@ async function renderCommunity() {
   selected.forEach((fear) => {
     const div = document.createElement("div");
     div.className = "feed-item";
-    div.innerHTML = `<strong>Groupe ${fear}</strong><br><span class="muted">Canal anonyme + parrainage pair-à-pair</span>`;
+    div.innerHTML = `<strong>Groupe de soutien — ${fear}</strong><br><span class="muted">Ici vous pouvez parler librement et vous détendre.</span>`;
     groupsList.appendChild(div);
   });
 
