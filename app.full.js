@@ -592,9 +592,14 @@ function renderProgress() {
 async function renderCommunity() {
   const selected = getCommunityGroups();
   const groupDescriptions = {
-    "Échec": "Ici vous pouvez dire vos échecs de la journée ou de votre vie.",
-    "Rejet": "Ici vous pouvez parler librement d’un rejet ou d’une exclusion que vous avez eue.",
-    "Solitude": "Ici vous pouvez librement parler de comment vous vous sentez.",
+    echec: "Ici vous pouvez dire vos échecs de la journée ou de votre vie.",
+    rejet: "Ici vous pouvez parler librement d’un rejet ou d’une exclusion que vous avez eue.",
+    solitude: "Ici vous pouvez librement parler de comment vous vous sentez.",
+    jugement: "Ici vous pouvez parler librement sans peur du jugement.",
+    abandon: "Ici vous pouvez exprimer vos peurs liées à l’abandon et être écouté·e.",
+    conflit: "Ici vous pouvez partager les tensions vécues et relâcher la pression.",
+    maladie: "Ici vous pouvez parler de vos inquiétudes de santé en toute bienveillance.",
+    pertedecontrole: "Ici vous pouvez décrire les moments où vous vous sentez dépassé·e.",
   };
 
   if (!state.activeCommunityGroup || !selected.includes(state.activeCommunityGroup)) {
@@ -607,7 +612,8 @@ async function renderCommunity() {
   selected.forEach((fear) => {
     const div = document.createElement("div");
     div.className = `feed-item group-item ${state.activeCommunityGroup === fear ? "is-active" : ""}`;
-    const description = groupDescriptions[fear] || "Ici vous pouvez parler librement et vous détendre.";
+    const key = normalizeFearKey(fear);
+    const description = groupDescriptions[key] || "Ici vous pouvez parler librement dans cet espace de soutien.";
     div.innerHTML = `<strong>Groupe de soutien — ${fear}</strong><br><span class="muted">${description}</span>`;
     div.addEventListener("click", async () => {
       state.activeCommunityGroup = fear;
@@ -703,6 +709,14 @@ function getCommunityGroups() {
   const groups = state.fears.length ? [...state.fears] : ["Échec", "Rejet"];
   if (!groups.includes("Solitude")) groups.push("Solitude");
   return [...new Set(groups)];
+}
+
+function normalizeFearKey(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z]/g, "")
+    .toLowerCase();
 }
 
 async function addJournalEntry(e) {
