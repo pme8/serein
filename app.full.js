@@ -591,6 +591,12 @@ function renderProgress() {
 
 async function renderCommunity() {
   const selected = getCommunityGroups();
+  const groupDescriptions = {
+    "Échec": "Ici vous pouvez dire vos échecs de la journée ou de votre vie.",
+    "Rejet": "Ici vous pouvez parler librement d’un rejet ou d’une exclusion que vous avez eue.",
+    "Solitude": "Ici vous pouvez librement parler de comment vous vous sentez.",
+  };
+
   if (!state.activeCommunityGroup || !selected.includes(state.activeCommunityGroup)) {
     state.activeCommunityGroup = selected[0];
     saveState();
@@ -601,7 +607,8 @@ async function renderCommunity() {
   selected.forEach((fear) => {
     const div = document.createElement("div");
     div.className = `feed-item group-item ${state.activeCommunityGroup === fear ? "is-active" : ""}`;
-    div.innerHTML = `<strong>Groupe de soutien — ${fear}</strong><br><span class="muted">Ici vous pouvez parler librement et vous détendre.</span>`;
+    const description = groupDescriptions[fear] || "Ici vous pouvez parler librement et vous détendre.";
+    div.innerHTML = `<strong>Groupe de soutien — ${fear}</strong><br><span class="muted">${description}</span>`;
     div.addEventListener("click", async () => {
       state.activeCommunityGroup = fear;
       saveState();
